@@ -29,39 +29,34 @@
     <cffunction name="sendEmail" access="private" returntype="void" output="true">
         <cfargument name="data" type="query" required="true" hint="query with the bug report entries">
         <cfargument name="rawEntry" type="bugLog.components.rawEntryBean" required="true">
+            
+        <cfscript>
+            var q = arguments.data;
+            var numHours = int(variables.config.timespan / 60);
+            var numMinutes = variables.config.timespan mod 60;
+
+            var intro = "BugLog has received a new bug report";
+            if(len(variables.config.application))
+                intro &= " for application #variables.config.application#";
+            if(len(variables.config.severity))
+                intro &= " with a severity of #variables.config.severity#";
+            if(len(variables.config.host))
+                intro &= " on host #variables.config.host#";
+            intro &= " on the last ";
+            if(numHours > 0) {
+                intro &= "#numHours# hours";
+                if(numMinutes) intro &= " and ";
+            }
+            if(numMinutes > 0)
+                intro &= "#numMinutes# minutes";
         
-        <cfset var q = arguments.data>
-        <cfset var numHours = int(variables.config.timespan / 60)>
-        <cfset var numMinutes = variables.config.timespan mod 60>
-        <cfset var intro = "">
-
-        <cfsavecontent variable="intro">
-            <cfoutput>
-                BugLog has received a new bug report 
-                <cfif variables.config.application neq "">
-                    for application <strong>#variables.config.application#</strong>
-                </cfif>
-                <cfif variables.config.host neq "">
-                    on host <strong>#variables.config.host#</strong>
-                </cfif>
-                <cfif variables.config.severity neq "">
-                    with a severity of <strong>#variables.config.severity#</strong>
-                </cfif>
-                on the last 
-                <b>
-                    <cfif numHours gt 0> #numHours# hour<cfif numHours gt 1>s</cfif> <cfif numMinutes gt 0> and </cfif></cfif>
-                    <cfif numMinutes gt 0> #numMinutes# minute<cfif numMinutes gt 1>s</cfif></cfif>
-                </b>
-            </cfoutput>
-        </cfsavecontent>
-
-        <cfset var payload = {
-            "type" = "link",
-            "title" = "BugLog: [#q.ApplicationCode#][#q.hostName#] #q.message#",
-            "body" = intro,
-            "url" = getBugEntryHREF(q.EntryID)
-
-        } />
+            var payload = {
+                "type" = "link",
+                "title" = "[#q.ApplicationCode#][#q.hostName#] #q.message#",
+                "body" = intro,
+                "url" = getBugEntryHREF(q.EntryID)
+            };
+        </cfscript>
 
         <cfhttp method="post" url="https://api.pushbullet.com/v2/pushes"
                 username="#variables.config.accessToken#">
