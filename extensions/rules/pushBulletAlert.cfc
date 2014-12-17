@@ -59,7 +59,8 @@
         </cfscript>
 
         <cfhttp method="post" url="https://api.pushbullet.com/v2/pushes"
-                username="#variables.config.accessToken#">
+                username="#variables.config.accessToken#"
+                password="">
             <cfhttpparam type="header" name="Content-Type" value="application/json">
             <cfhttpparam type="body" value="#serializeJson(payload)#">
         </cfhttp>
