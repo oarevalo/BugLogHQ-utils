@@ -35,7 +35,7 @@
             var payload = {
                 "username" = "BugLogHQ",
                 "icon_url" = getBaseBugLogHREF() & "hq/images/bug.png",
-                "text" = "*[#q.severity#] #q.message#*" & chr(10)
+                "text" = "*[#q.severityCode#] #q.message#*" & chr(10)
                         & "Application: `#q.ApplicationCode#`  Host: `#q.hostName#`" & chr(10)
                         & "<" & getBugEntryHREF(q.EntryID) & ">"
             };

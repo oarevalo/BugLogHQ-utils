@@ -32,28 +32,10 @@
             
         <cfscript>
             var q = arguments.data;
-            var numHours = int(variables.config.timespan / 60);
-            var numMinutes = variables.config.timespan mod 60;
-
-            var intro = "BugLog has received a new bug report";
-            if(len(variables.config.application))
-                intro &= " for application #variables.config.application#";
-            if(len(variables.config.severity))
-                intro &= " with a severity of #variables.config.severity#";
-            if(len(variables.config.host))
-                intro &= " on host #variables.config.host#";
-            intro &= " on the last ";
-            if(numHours > 0) {
-                intro &= "#numHours# hours";
-                if(numMinutes) intro &= " and ";
-            }
-            if(numMinutes > 0)
-                intro &= "#numMinutes# minutes";
-        
             var payload = {
                 "type" = "link",
-                "title" = "[#q.ApplicationCode#][#q.hostName#] #q.message#",
-                "body" = intro,
+                "title" = "[#q.severityCode#] BugLogHQ Alert!",
+                "body" = "[#q.ApplicationCode#][#q.hostName#] #q.message#",
                 "url" = getBugEntryHREF(q.EntryID)
             };
         </cfscript>
